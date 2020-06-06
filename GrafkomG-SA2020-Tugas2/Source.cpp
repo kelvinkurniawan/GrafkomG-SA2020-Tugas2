@@ -5,43 +5,50 @@
 const double PI = 3.141592653589793;
 int i;
 
-void createPlanet(int rad, int point, int x_pos, int y_pos) {
+double pos = 0;
+
+void createPlanet(int rad, int point, int x_pos, int y_pos, float delta) {
 	glBegin(GL_POLYGON);
 	for (i = 0; i <= 360; i++) {
-		float A = i * (2 * PI / point);
-		float x = x_pos + rad * cos(A);
-		float y = y_pos + rad * sin(A);
+		float A = (2 * PI) * i / 360;
+		float x = cos(A) * rad + (cos(pos * delta) * y_pos + x_pos);
+		float y = sin(A) * rad + (sin(pos * delta) * y_pos + x_pos);
 		glVertex2f(x, y);
 	}
 	glEnd();
 }
 
 void renderObject() {
-	glPointSize(5);
-
-	glColor3f(1, 1, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	// Sun
 	glColor3ub(241, 196, 15);
-	createPlanet(10, 100, 100, 100);
+	createPlanet(10, 100, 100, 0, 0);
 
 	// Mercury
 	glColor3ub(212, 158, 120);
-	createPlanet(2, 50, 100, 80);
+	createPlanet(2, 50, 100, 20, 20);
 
 	// Venus
 	glColor3ub(236, 191, 150);
-	createPlanet(3, 100, 100, 60);
+	createPlanet(3, 100, 100, 40, 15);
 
 	// Earth
 	glColor3ub(0, 179, 235);
-	createPlanet(5, 100, 100, 35);
+	createPlanet(5, 100, 100, 60, 10);
 
 	// Mars
 	glColor3ub(222, 51, 32);
-	createPlanet(2.5, 100, 100, 5);
+	createPlanet(2.5, 100, 100, 90, 5);
 
 	glFlush();
+}
+
+void animate(int) {
+	pos += 0.001f;
+
+	glutPostRedisplay();
+	glutTimerFunc(7, animate, 0);
 }
 
 int main(int argc, char** argv) {
@@ -50,6 +57,9 @@ int main(int argc, char** argv) {
 	glutInitWindowSize(600, 600);
 	glutInitWindowPosition(0, 0);
 	glutCreateWindow("Tugas Pertama ~ Kelvin Kurniawan");
+
+	glutTimerFunc(7, animate, 0);
+	glEnable(GL_POINT_SMOOTH);
 	glutDisplayFunc(renderObject);
 	gluOrtho2D(0, 200, 0, 200);
 
