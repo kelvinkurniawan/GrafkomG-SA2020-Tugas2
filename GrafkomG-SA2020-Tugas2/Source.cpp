@@ -8,6 +8,8 @@ int i;
 double pos = 0;
 double satellitePos = 0;
 
+bool isMove = false;
+
 void createPlanet(int rad, int x_pos, int y_pos, float delta) {
 	glBegin(GL_POLYGON);
 	for (i = 0; i <= 360; i++) {
@@ -122,15 +124,28 @@ void renderObject() {
 }
 
 void animate(int) {
-	pos += 0.00075f;
-	satellitePos += 0.005f;
+	if (isMove) {
+		pos += 0.00075f;
+		satellitePos += 0.005f;
+	}
+	else {
+		pos += 0.0f;
+		satellitePos += 0.0f;
+	}
 
 	glutPostRedisplay();
 	glutTimerFunc(7, animate, 0);
 }
 
 void key(unsigned char key, int x, int y) {
-
+	if (key == 'P' || key == 'p') {
+		if (!isMove) {
+			isMove = true;
+		}
+		else {
+			isMove = false;
+		}
+	}
 }
 
 int main(int argc, char** argv) {
