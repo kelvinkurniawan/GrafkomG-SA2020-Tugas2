@@ -9,7 +9,7 @@ double pos = 0;
 double satellitePos = 0;
 double speed = 0;
 
-bool isMove = false;
+bool isMove = true;
 bool showOrbit = false;
 bool showSatellite = false;
 bool showSatelliteOrbit = false;
@@ -37,6 +37,26 @@ void trackPlane(int x_pos, int y_pos, float delta) {
 		float x = cos(A) + (cos(pos * delta) * y_pos + x_pos);
 		float y = sin(A) + (sin(pos * delta) * y_pos + x_pos);
 		glVertex2f(x, y);
+	}
+	glEnd();
+}
+
+void trackSatellite(int x_pos, int y_pos, float delta, float deltaSatellite, float radiusSatellite) {
+	glColor3ub(60, 60, 60);
+
+	glBegin(GL_LINES);
+	for (i = 0; i <= 360; i++) {
+		float A = (2 * PI) * i / 360;
+		float x = cos(A) + (cos(pos * delta) * y_pos + x_pos);
+		float y = sin(A) + (sin(pos * delta) * y_pos + x_pos);
+		glVertex2f(x, y);
+	}
+	for (i = 0; i <= 360; i++) {
+		float A = (2 * PI) * i / 360;
+		float x = cos(A) + (cos(deltaSatellite * satellitePos) * radiusSatellite + (cos(pos * delta) * y_pos + x_pos));
+		float y = sin(A) + (sin(deltaSatellite * satellitePos) * radiusSatellite + (sin(pos * delta) * y_pos + x_pos));
+		glVertex2f(x, y);
+		glColor3ub(20, 20, 20);
 	}
 	glEnd();
 }
@@ -70,7 +90,6 @@ void createSatellite(int rad, int x_pos, int y_pos, float delta, float deltaSate
 }
 
 void createSatelliteOrbit(int rad, int x_pos, int y_pos, float delta) {
-	int center = 100;
 	glColor3ub(60, 60, 60);
 	glBegin(GL_LINE_LOOP);
 	for (i = 0; i <= 360; i++) {
@@ -102,6 +121,12 @@ void renderObject() {
 		trackPlane(100, 90, 5);
 	}
 
+	if (showTrackSatellite) {
+		trackSatellite(100, 60, 10, 5, 12);
+		trackSatellite(100, 90, 5, 4.5, 5);
+		trackSatellite(100, 90, 5, 5, 10);
+	}
+
 	if (showSatelliteOrbit) {
 		createSatelliteOrbit(12, 100, 60, 10);
 		createSatelliteOrbit(5, 100, 90, 5);
@@ -113,6 +138,7 @@ void renderObject() {
 		createSatellite(1, 100, 90, 5, 4.5, 5);
 		createSatellite(1, 100, 90, 5, 5, 10);
 	}
+
 	// create plane
 
 	// Sun
@@ -134,6 +160,7 @@ void renderObject() {
 	// Mars
 	glColor3ub(222, 51, 32);
 	createPlanet(3, 100, 90, 5);
+
 
 	glFlush();
 }
